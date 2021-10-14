@@ -17,6 +17,7 @@ public class CompetitionList {
 
     public ArrayList<Competition> getCompetitionList() {
         ArrayList<Competition> Competitions = new ArrayList<>();
+        boolean mEmpty = false;
         try {
             Element tableBody = null;
 
@@ -30,46 +31,53 @@ public class CompetitionList {
             for (Element tableElement : entryTable) {
                 //first table found
                 if (i == 0) {
-                    Element subTableElement = tableElement.child(0);
-                    tableBody = subTableElement.child(1);
+                    if (tableElement.text().equals("No results found.")) {
+                        mEmpty = true;
+                    }
+                    if (mEmpty == false) {
+                        Element subTableElement = tableElement.child(0);
+                        tableBody = subTableElement.child(1);
+                    }
                 }
                 i+=1;
             }
 
-            Elements tableEntries = tableBody.children();
+            if (mEmpty == false) {
+                Elements tableEntries = tableBody.children();
 
-            for (Element dataEntry : tableEntries) {
-                Elements entryInfo = dataEntry.children();
+                for (Element dataEntry : tableEntries) {
+                    Elements entryInfo = dataEntry.children();
 
-                String compName = null, compDate = null, compRegDate = null, compLoc = null;
+                    String compName = null, compDate = null, compRegDate = null, compLoc = null;
 
-                i = 0;
-                for (Element info : entryInfo) {
-                    if (info.hasText()) {
-                        if (i == 1) {
-                            Elements regDateAndName = info.children();
-                            int k = 0;
-                            for (Element j : regDateAndName) {
-                                if (j.hasText()) {
-                                    if (k == 0) {
-                                        compName = j.text();
-                                    } else if (k == 1) {
-                                        compRegDate = j.text();
+                    i = 0;
+                    for (Element info : entryInfo) {
+                        if (info.hasText()) {
+                            if (i == 1) {
+                                Elements regDateAndName = info.children();
+                                int k = 0;
+                                for (Element j : regDateAndName) {
+                                    if (j.hasText()) {
+                                        if (k == 0) {
+                                            compName = j.text();
+                                        } else if (k == 1) {
+                                            compRegDate = j.text();
+                                        }
                                     }
+                                    k += 1;
                                 }
-                                k+=1;
+                            } else if (i != 3) {
+                                if (i == 0) {
+                                    compDate = info.text();
+                                } else if (i == 2) {
+                                    compLoc = info.text();
+                                }
+                            } else {
+                                Competition newComp = new Competition(compName, compLoc, compDate, compRegDate);
+                                Competitions.add(newComp);
                             }
-                        } else if (i!=3) {
-                            if (i == 0) {
-                                compDate = info.text();
-                            } else if (i == 2) {
-                                compLoc = info.text();
-                            }
-                        } else {
-                            Competition newComp = new Competition(compName, compLoc, compDate, compRegDate);
-                            Competitions.add(newComp);
+                            i += 1;
                         }
-                        i+=1;
                     }
                 }
             }

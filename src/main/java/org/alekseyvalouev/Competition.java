@@ -1,6 +1,8 @@
 package org.alekseyvalouev;
 
-public class Competition {
+import java.io.Serializable;
+
+public class Competition implements Serializable {
     private String mName, mLocation, mDate, mRegDate;
     public Competition(String name, String location, String date, String regDate) {
         mName = name;
