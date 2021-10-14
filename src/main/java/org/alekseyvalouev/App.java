@@ -1,6 +1,5 @@
 package org.alekseyvalouev;
 
-
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -22,7 +21,7 @@ public class App {
             for (Competition E : newNatComps) {
                 boolean matches = false;
                 for (Competition F : oldNatComps) {
-                    if (F.getFullInfo().equals(E.getFullInfo())) {
+                    if (F.getName().equals(E.getName()) && F.getDate().equals(E.getDate())) {
                         matches = true;
                     }
                 }
@@ -36,8 +35,7 @@ public class App {
     }
 
     public static void main( String[] args ) throws IOException, ClassNotFoundException {
-        StorageWriter mStorageWriter = new StorageWriter();
-        StorageReader mStorageReader = new StorageReader();
+        SendEmail testMail = new SendEmail("xxx@gmail.com", "xxx@gmail.com");
 
         String mRegionalUrl = "https://member.usafencing.org/search/tournaments/regional?search=&filter_by_region=4&filter_by_weapon=1&filter_by_gender=3&event_scopes=&filter_by_type=&filter_by_event_type=&filter_by_show=future&designated=";
         String mSYCUrl = "https://member.usafencing.org/search/tournaments/regional?search=&filter_by_region=all&filter_by_weapon=1&filter_by_gender=3&event_scopes=syc&filter_by_type=&filter_by_event_type=&filter_by_show=future&designated=";
@@ -57,35 +55,50 @@ public class App {
         ArrayList<Competition> mNewSJCComps = getNewComps("SJCStorage", mSJC);
         ArrayList<Competition> mNewSYCComps = getNewComps("SYCStorage", mSYC);
 
-        System.out.println();
-        System.out.println("National Competitions");
-        for (Competition E : mNewNatComps) {
-            System.out.println("====");
-            System.out.println(E.getFullInfo());
+        String mDataString = "";
+
+        if (mNewNatComps.size() > 0) {
+            mDataString += "\n";
+            mDataString += "National Competitions\n";
+            for (Competition E : mNewNatComps) {
+                mDataString += "====\n";
+                mDataString += E.getFullInfo() + "\n";
+            }
         }
-        System.out.println();
-        System.out.println("Regional Competitions");
-        for (Competition E : mNewRegComps) {
-            System.out.println("====");
-            System.out.println(E.getFullInfo());
+        if (mNewRegComps.size() > 0) {
+            mDataString += "\n";
+            mDataString += "Regional Competitions\n";
+            for (Competition E : mNewRegComps) {
+                mDataString += "====\n";
+                mDataString += E.getFullInfo() + "\n";
+            }
         }
-        System.out.println();
-        System.out.println("SCC Competitions");
-        for (Competition E : mNewSCCComps) {
-            System.out.println("====");
-            System.out.println(E.getFullInfo());
+        if (mNewSCCComps.size() > 0) {
+            mDataString += "\n";
+            mDataString += "SCC Competitions\n";
+            for (Competition E : mNewSCCComps) {
+                mDataString += "====\n";
+                mDataString += E.getFullInfo() + "\n";
+            }
         }
-        System.out.println();
-        System.out.println("SJC Competitions");
-        for (Competition E : mNewSJCComps) {
-            System.out.println("====");
-            System.out.println(E.getFullInfo());
+        if (mNewSJCComps.size() > 0) {
+            mDataString += "\n";
+            mDataString += "SJC Competitions\n";
+            for (Competition E : mNewSJCComps) {
+                mDataString += "====\n";
+                mDataString += E.getFullInfo() + "\n";
+            }
         }
-        System.out.println();
-        System.out.println("SYC Competitions");
-        for (Competition E : mNewSYCComps) {
-            System.out.println("====");
-            System.out.println(E.getFullInfo());
+        if (mNewSYCComps.size() > 0) {
+            mDataString += "\n";
+            mDataString += "SYC Competitions\n";
+            for (Competition E : mNewSYCComps) {
+                mDataString += "====\n";
+                mDataString += E.getFullInfo() + "\n";
+            }
+        }
+        if (mDataString.equals("") == false) {
+            testMail.send(mDataString);
         }
     }
 }
